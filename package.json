@@ -50,6 +50,7 @@
     "gulp-useref": "^3.1.2",
     "gulp-util": "^3.0.6",
     "gulp-vulcanize": "^6.1.0",
+    "http-parser-js": "^0.5.8",
     "karma": "^1.1.1",
     "karma-chai": "^0.1.0",
     "karma-chrome-launcher": "^2.2.0",

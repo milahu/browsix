@@ -12,7 +12,7 @@ import { DirFile, RegularFile, NullFile, resolve } from './file';
 import { ExitCallback, OutputCallback, SyscallContext, SyscallResult,
 	Syscall, ConnectCallback, IKernel, ITask, IFile, Environment } from './types';
 
-import { HTTPParser } from './http_parser';
+import { HTTPParser } from 'http-parser-js';
 import * as bfs from 'browserfs';
 import * as marshal from 'node-binary-marshal';
 
