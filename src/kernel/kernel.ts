@@ -19,6 +19,8 @@ import * as marshal from 'node-binary-marshal';
 import { utf8Slice, utf8ToBytes } from '../browser-node/binding/buffer';
 
 import Worker from 'web-worker';
+import setImmediate from 'queue-microtask';
+
 // controls the default of whether to delay the initialization message
 // to a Worker to aid in debugging.
 let DEBUG = false;
@@ -43,50 +45,7 @@ function getRandomPort(): number {
 	return Math.floor(Math.random() * (max - min)) + min;
 }
 
-
-// from + for John's BrowserFS
-// TODO: don't copy paste code :\
-if (true) {
-	let g: any = global;
-
-	let timeouts: [Function, any[]][] = [];
-	const messageName = "zero-timeout-message";
-	let canUsePostMessage = () => {
-		if (typeof g.importScripts !== 'undefined' || !g.postMessage)
-			return false;
-
-		let isAsync = true;
-		let oldOnMessage = g.onmessage;
-		g.onmessage = function(): void { isAsync = false; };
-		g.postMessage('', '*');
-		g.onmessage = oldOnMessage;
-		return isAsync;
-	};
-	if (canUsePostMessage()) {
-		g.setImmediate = (fn: () => void, ...args: any[]) => {
-			timeouts.push([fn, args]);
-			g.postMessage(messageName, "*");
-		};
-		let handleMessage = (event: MessageEvent) => {
-			if (event.source === self && event.data === messageName) {
-				if (event.stopPropagation)
-					event.stopPropagation();
-				else
-					event.cancelBubble = true;
-			}
-
-			if (timeouts.length > 0) {
-				let [fn, args] = timeouts.shift();
-				return fn.apply(this, args);
-			}
-		};
-		g.addEventListener('message', handleMessage, true);
-	} else {
-		g.setImmediate = (fn: () => void, ...args: any[]) => {
-			return setTimeout.apply(this, [fn, 0].concat(args));
-		};
-	}
-}
+globalThis.setImmediate = setImmediate;
 
 // the following boilerplate allows us to use WebWorkers both in the
 // browser and under node, and give the typescript compiler full
