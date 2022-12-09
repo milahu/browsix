@@ -62,7 +62,8 @@
     "tslint": "^5.5.0",
     "typescript": "^2.4.1",
     "vinyl-buffer": "^1.0.0",
-    "vinyl-source-stream": "^1.1.0"
+    "vinyl-source-stream": "^1.1.0",
+    "web-worker": "^1.2.0"
   },
   "dependencies": {
     "node-binary-marshal": "^0.4.2",

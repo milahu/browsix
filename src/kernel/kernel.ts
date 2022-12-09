@@ -18,6 +18,7 @@ import * as marshal from 'node-binary-marshal';
 
 import { utf8Slice, utf8ToBytes } from '../browser-node/binding/buffer';
 
+import Worker from 'web-worker';
 // controls the default of whether to delay the initialization message
 // to a Worker to aid in debugging.
 let DEBUG = false;
@@ -97,11 +98,7 @@ interface WorkerStatic {
 	prototype: Worker;
 	new(stringUrl: string): Worker;
 }
-declare var Worker: WorkerStatic;
-if (typeof window === 'undefined' || typeof (<any>window).Worker === 'undefined')
-	var Worker = <WorkerStatic>require('webworker-threads').Worker;
-else
-	var Worker = <WorkerStatic>(<any>window).Worker;
+
 /* tslint:enable */
 
 const PER_NONBLOCK = 0x40;
