@@ -62,7 +62,7 @@
     "queue-microtask": "^1.2.3",
     "through2": "^2.0.3",
     "tslint": "^5.5.0",
-    "typescript": "^2.4.1",
+    "typescript": "^4.9.4",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
     "vite": "^4.0.0",
