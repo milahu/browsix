@@ -7,8 +7,8 @@
 import { SyscallContext, IKernel, IFile } from './types';
 import { Marshal, fs } from 'node-binary-marshal';
 import { EFAULT } from './constants';
-import Stats from 'browserfs-browsix-tmp/dist/node/core/node_fs_stats';
-import { FileType } from 'browserfs-browsix-tmp/dist/node/core/node_fs_stats';
+import Stats from 'browserfs/dist/node/core/node_fs_stats';
+import { FileType } from 'browserfs/dist/node/core/node_fs_stats';
 
 const SEEK_SET = 0;
 const SEEK_CUR = 1;
