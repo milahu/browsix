@@ -4,8 +4,8 @@
   "description": "in-browser, multi-process operating system",
   "main": "lib/kernel/kernel.js",
   "scripts": {
-    "prepublishOnly": "node_modules/.bin/gulp build:dist",
-    "test": "node_modules/.bin/gulp test-once"
+    "dev": "vite",
+    "build": "vite build"
   },
   "repository": {
     "url": "https://github.com/plasma-umass/browsix.git"
