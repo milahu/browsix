@@ -1,4 +1,5 @@
-import {PolymerElement} from '@polymer/polymer';
+import {PolymerElement, html} from '@polymer/polymer';
+
 import {customElement, property, observe} from '@polymer/decorators';
 
 interface ExitCallback {
@@ -42,6 +43,67 @@ namespace Terminal {
 					this.kernel = k;
 				},
 				{readOnly: false});
+		}
+
+		//static get properties() { return { mood: String }}
+
+		static get template() {
+			return html`
+        <style>
+
+        #output, #input_container, #input {
+          background: #171a1b;
+          font-size: 24px;
+          font-family: 'Hack', 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+          color: #eeeeec;
+          -webkit-box-sizing: border-box;
+          -moz-box-sizing: border-box;
+          box-sizing: border-box;
+          width: 100%;
+          word-break: break-all;
+        }
+
+        #output, #input_container {
+          padding-left: 24px;
+          padding-right: 24px;
+        }
+
+        #output {
+          padding-top: 24px;
+        }
+
+        #output:empty {
+          display: none;
+        }
+
+        #input_container {
+          padding-bottom: 24px;
+        }
+
+        #output:empty + #input_container {
+          padding-top: 24px;
+        }
+
+        #input {
+          display: inline;
+          width: 90%;
+          background: transparent;
+          border: 0;
+          outline: 0;
+          color: #eeeeec;
+          font-size: 24px;
+          font-family: 'Hack', 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+        
+        </style>
+
+        <div id="output"></div>
+
+        <div id="input_container">
+          \$ 
+          <input id="input" autofocus="">
+        </div>
+			`;
 		}
 
 		attached(): void {
