@@ -20,7 +20,11 @@ import * as marshal from 'node-binary-marshal';
 import { utf8Slice, utf8ToBytes } from '../browser-node/binding/buffer';
 
 import Worker from 'web-worker';
-import setImmediate from 'queue-microtask';
+
+// FIXME this hangs. callback is never called
+//import setImmediate from 'queue-microtask'; // hangs with: globalThis.setImmediate = setImmediate
+const setImmediate = (cb) => setTimeout(cb, 0); // works
+//const setImmediate = globalThis.queueMicrotask; // hangs
 
 // controls the default of whether to delay the initialization message
 // to a Worker to aid in debugging.
@@ -46,7 +50,7 @@ function getRandomPort(): number {
 	return Math.floor(Math.random() * (max - min)) + min;
 }
 
-globalThis.setImmediate = setImmediate;
+//globalThis.setImmediate = setImmediate;
 
 // the following boilerplate allows us to use WebWorkers both in the
 // browser and under node, and give the typescript compiler full
@@ -2506,7 +2510,7 @@ export function BootWith(rootFs: any, cb: BootCallback, args: BootArgs = {}): vo
 	let k = new Kernel(fs, nCPUs, args);
 	// FIXME: this is for debugging purposes
 	(<any>window).kernel = k;
-	setImmediate(() => cb(null, k));
+	setImmediate(() => cb(null, k)); // FIXME
 }
 
 export function BrowsixFSes(): any {

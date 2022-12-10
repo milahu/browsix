@@ -34,6 +34,7 @@ export function Terminal(props: TerminalProps) {
 		input.addEventListener('keypress', onInput);
 		document.body.addEventListener('click', focus);
 
+		/*
 		(window as any).Boot(
 			'XmlHttpRequest',
 			['index.json', 'fs', true],
@@ -47,6 +48,34 @@ export function Terminal(props: TerminalProps) {
 				kernel = k;
 			},
 			{readOnly: false});
+		*/
+
+		if (props.kernel) {
+			kernel = props.kernel;
+		}
+		else {
+			console.log("browsix-terminal.tsx: props.kernel is empty", props.kernel)
+		}
+		/*
+		else {
+			// boot a new kernel
+			// with XmlHttpRequest filesystem from /fs/index.json
+			(window as any).Boot(
+				'XmlHttpRequest',
+				['index.json', 'fs', true],
+				(err: any, k: Kernel) => {
+					console.log("browsix-terminal.ts: boot callback");
+					if (err) {
+						console.log(err);
+						output.innerHTML = ERROR;
+						throw new Error(err);
+					}
+					kernel = k;
+				},
+				{readOnly: false});
+		}
+		*/
+
 	});
 
 	function onInput(ev: any) {
