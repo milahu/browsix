@@ -1,4 +1,4 @@
-/// <reference path="../../../bower_components/polymer-ts/polymer-ts.d.ts"/>
+/// <reference path="../../../../bower_components/polymer-ts/polymer-ts.d.ts"/>
 
 interface ExitCallback {
 	(pid: number, code: number): void;
