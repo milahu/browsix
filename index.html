@@ -33,33 +33,10 @@
 
   <link rel="stylesheet" href="app/styles/app-theme.css">
 
-  <!-- build:js bower_components/webcomponentsjs/webcomponents-lite.min.js -->
-  <script src="node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
-  <!-- endbuild -->
-
-  <custom-style>
-    <style is="custom-style" src="app/styles/shared-styles.css"></style>
-  </custom-style>
-
-  <script src="src/kernel/kernel.ts" type="module"></script>
-
-  <script type="module">
-    import "./app/elements/elements.ts"
-  </script>
-
-  <script type="module">
-    import "./app/elements/browsix-terminal/browsix-terminal.js"
-  </script>
+  <script src="app/index.jsx" type="module"></script>
 
 </head>
 
-<body unresolved class="fullbleed layout vertical">
-    <browsix-terminal class="fit"></browsix-terminal>
-    <span id="browser-sync-binding"></span>
-
-  <script type="module">
-    console.log("index.html: browsix-terminal", customElements.get("browsix-terminal"))
-  </script>
-</body>
+<body unresolved class="fullbleed layout vertical"></body>
 
 </html>
