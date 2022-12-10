@@ -13,6 +13,7 @@ import { ExitCallback, OutputCallback, SyscallContext, SyscallResult,
 	Syscall, ConnectCallback, IKernel, ITask, IFile, Environment } from './types';
 
 import { HTTPParser } from 'http-parser-js';
+import type { HeaderInfo, HeaderObject } from 'http-parser-js';
 import * as bfs from 'browserfs';
 import * as marshal from 'node-binary-marshal';
 
@@ -1596,21 +1597,26 @@ export class Kernel implements IKernel {
 
 		let getHeader = (name: string): string => {
 			let lname = name.toLowerCase();
-			for (let i = 0; i+1 < httpParser.info.headers.length; i += 2) {
-				if (httpParser.info.headers[i].toLowerCase() === lname)
-					return httpParser.info.headers[i+1];
+			for (let i = 0; i+1 < headerInfo.headers.length; i += 2) {
+				if (headerInfo.headers[i].toLowerCase() === lname)
+					return headerInfo.headers[i+1];
 			}
 			return '';
 		};
 
-		httpParser.isUserCall = true;
-		httpParser[HTTPParser.kOnHeadersComplete] = (info: any) => {
-			// who cares
+		// TODO remove?
+		//httpParser.isUserCall = true;
+
+		let headerInfo: HeaderInfo<HeaderObject>;
+
+		httpParser[HTTPParser.kOnHeadersComplete] = (res) => {
+			headerInfo = res;
 		};
 
 		httpParser[HTTPParser.kOnBody] = (chunk: any, off: number, len: number) => {
 			responseChunks.push(chunk.slice(off, off+len));
 		};
+
 		httpParser[HTTPParser.kOnMessageComplete] = () => {
 			socketFile.unref();
 
@@ -1627,7 +1633,7 @@ export class Kernel implements IKernel {
 			let blob = new Blob([data], {type: mime});
 
 			let ctx: any = {
-				status: httpParser.info.statusCode,
+				status: headerInfo.statusCode,
 				response: blob,
 			};
 
@@ -1643,9 +1649,14 @@ export class Kernel implements IKernel {
 			}
 			// send chunk to http parser
 			httpParser.execute(buf.slice(0, len));
+			// recursion: read next chunk
 			if (len > 0) {
 				buf = new Buffer(64*1024);
 				socketFile.read(buf, -1, onRead);
+			}
+			else {
+				// done reading all chunks
+				httpParser.finish();
 			}
 		}
 
