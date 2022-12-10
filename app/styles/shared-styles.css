@@ -1,0 +1,12 @@
+/* shared styles for all elements and index.html */
+
+.page-title {
+  /* FIXME Unknown at rule @apply */
+  @apply(--paper-font-display2);
+}
+
+@media (max-width: 600px) {
+  .page-title {
+    font-size: 24px!important;
+  }
+}

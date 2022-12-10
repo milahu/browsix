@@ -37,14 +37,15 @@
   <script src="node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
   <!-- endbuild -->
 
+  <custom-style>
+    <style is="custom-style" src="app/styles/shared-styles.css"></style>
+  </custom-style>
+
   <script src="src/kernel/kernel.ts" type="module" defer></script>
 
   <!-- will be replaced with elements/elements.vulcanized.html -->
   <link rel="import" href="app/elements/elements.html">
   <!-- endreplace-->
-
-  <!-- For shared styles, shared-styles.html import in elements.html -->
-  <style is="custom-style" include="shared-styles"></style>
 
 </head>
 
