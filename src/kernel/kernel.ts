@@ -1573,7 +1573,7 @@ export class Kernel implements IKernel {
 		});
 	}
 
-	httpRequest(url: string, cb: any): void {
+	httpRequest(url: string, onResponse: any): void {
 		let port = 80;
 		let parts = url.split('://')[1].split('/');
 		let host = parts[0];
@@ -1584,42 +1584,42 @@ export class Kernel implements IKernel {
 			port = parseInt(sPort, 10);
 		}
 
-		let req = 'GET ' + url + ' HTTP/1.1\r\n';
-		req += 'Host: localhost:' + port + '\r\n';
-		req += 'User-Agent: Browsix/1.0\r\n';
-		req += 'Accept: */*\r\n\r\n';
+		let request = 'GET ' + url + ' HTTP/1.1\r\n';
+		request += 'Host: localhost:' + port + '\r\n';
+		request += 'User-Agent: Browsix/1.0\r\n';
+		request += 'Accept: */*\r\n\r\n';
 
-		let resp: any[] = [];
-		let f = new SocketFile(null);
+		let responseChunks: any[] = [];
+		let socketFile = new SocketFile(null);
 
-		let p = new HTTPParser(HTTPParser.RESPONSE);
+		let httpParser = new HTTPParser(HTTPParser.RESPONSE);
 
 		let getHeader = (name: string): string => {
 			let lname = name.toLowerCase();
-			for (let i = 0; i+1 < p.info.headers.length; i += 2) {
-				if (p.info.headers[i].toLowerCase() === lname)
-					return p.info.headers[i+1];
+			for (let i = 0; i+1 < httpParser.info.headers.length; i += 2) {
+				if (httpParser.info.headers[i].toLowerCase() === lname)
+					return httpParser.info.headers[i+1];
 			}
 			return '';
 		};
 
-		p.isUserCall = true;
-		p[HTTPParser.kOnHeadersComplete] = (info: any) => {
+		httpParser.isUserCall = true;
+		httpParser[HTTPParser.kOnHeadersComplete] = (info: any) => {
 			// who cares
 		};
 
-		p[HTTPParser.kOnBody] = (chunk: any, off: number, len: number) => {
-			resp.push(chunk.slice(off, off+len));
+		httpParser[HTTPParser.kOnBody] = (chunk: any, off: number, len: number) => {
+			responseChunks.push(chunk.slice(off, off+len));
 		};
-		p[HTTPParser.kOnMessageComplete] = () => {
-			f.unref();
+		httpParser[HTTPParser.kOnMessageComplete] = () => {
+			socketFile.unref();
 
 			let mime = getHeader('Content-Type');
 			if (!mime) {
 				console.log('WARN: no content-type header');
 				mime = 'text/plain';
 			}
-			let response = Buffer.concat(resp);
+			let response = Buffer.concat(responseChunks);
 			let data = new Uint8Array(response.data.buff.buffer, 0, response.length);
 
 			// FIXME: only convert to blob if
@@ -1627,11 +1627,11 @@ export class Kernel implements IKernel {
 			let blob = new Blob([data], {type: mime});
 
 			let ctx: any = {
-				status: p.info.statusCode,
+				status: httpParser.info.statusCode,
 				response: blob,
 			};
 
-			cb.apply(ctx, []);
+			onResponse.apply(ctx, []);
 		};
 
 		let buf = new Buffer(64*1024);
@@ -1641,22 +1641,24 @@ export class Kernel implements IKernel {
 				console.log('http read error: ' + err);
 				return;
 			}
-			p.execute(buf.slice(0, len));
+			// send chunk to http parser
+			httpParser.execute(buf.slice(0, len));
 			if (len > 0) {
 				buf = new Buffer(64*1024);
-				f.read(buf, -1, onRead);
+				socketFile.read(buf, -1, onRead);
 			}
 		}
 
-		this.connect(f, host, port, (err: any) => {
+		this.connect(socketFile, host, port, (err: any) => {
 			if (err) {
 				console.log('connect failed: ' + err);
 				return;
 			}
 			//console.log('connected to ' + port);
-			f.read(buf, -1, onRead);
+			socketFile.read(buf, -1, onRead);
 
-			f.write(new Buffer(req, 'utf8'), -1, (ierr: any, len?: number) => {
+			// send request
+			socketFile.write(new Buffer(request, 'utf8'), -1, (ierr: any, len?: number) => {
 				if (ierr)
 					console.log('err: ' + ierr);
 			});
