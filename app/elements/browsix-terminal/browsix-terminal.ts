@@ -1,4 +1,4 @@
-/// <reference path="../../../bower_components/polymer-ts/polymer-ts.d.ts"/>
+import {customElement, property, observe} from '@polymer/decorators';
 
 interface ExitCallback {
 	(pid: number, code: number): void;
@@ -19,7 +19,7 @@ namespace Terminal {
 
 	const ERROR = 'FLAGRANT SYSTEM ERROR';
 
-	@component('browsix-terminal')
+	@customElement('browsix-terminal')
 	class Terminal extends polymer.Base {
 		@property({type: Object})
 		kernel: any;
