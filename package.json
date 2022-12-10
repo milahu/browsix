@@ -16,6 +16,7 @@
   },
   "homepage": "https://github.com/plasma-umass/browsix",
   "devDependencies": {
+    "@polymer/iron-flex-layout": "^3.0.1",
     "@polymer/paper-material": "^3.0.1",
     "@polymer/polymer": "^3.5.1",
     "@types/dropboxjs": "^0.0.30",
