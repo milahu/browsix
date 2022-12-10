@@ -1,10 +1,12 @@
 // vite.config.js
 //import { resolve } from 'path'
 import { defineConfig } from 'vite'
+import solidPlugin from 'vite-plugin-solid';
 import nodePolyfills from 'vite-plugin-node-stdlib-browser'
 
 export default defineConfig({
   plugins: [
+    solidPlugin(),
     nodePolyfills(),
   ],
   build: {

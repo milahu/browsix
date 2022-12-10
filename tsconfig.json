@@ -2,11 +2,24 @@
     "compilerOptions": {
         "target": "ESNext",
         "module": "commonjs",
+        "jsx": "preserve",
+        "jsxImportSource": "solid-js",
+        "strict": true,
+        "strictNullChecks": true,
+        "strictFunctionTypes": true,
+        "checkJs": true,
+        "types": ["vite/client"],
+        "noEmit": true,
+        "isolatedModules": true,
         "esModuleInterop": true,
-	"declaration": true,
+	    "declaration": true,
         "noImplicitAny": true,
         "removeComments": true,
         "experimentalDecorators": true,
-        "newLine": "LF"
-    }
+        "newLine": "LF",
+    },
+    "exclude": [
+        "node_modules",
+        "**/node_modules/*",
+    ],
 }
