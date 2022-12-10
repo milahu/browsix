@@ -16,8 +16,10 @@
   },
   "homepage": "https://github.com/plasma-umass/browsix",
   "devDependencies": {
+    "@polymer/polymer": "^3.5.1",
     "@types/dropboxjs": "^0.0.30",
     "@types/filesystem": "^0.0.32",
+    "@webcomponents/webcomponentsjs": "^2.7.0",
     "bfs-buffer": "^0.1.7",
     "bfs-path": "^0.1.2",
     "bower": "^1.8.8",
