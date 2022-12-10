@@ -1,3 +1,4 @@
+import {PolymerElement} from '@polymer/polymer';
 import {customElement, property, observe} from '@polymer/decorators';
 
 interface ExitCallback {
@@ -20,7 +21,7 @@ namespace Terminal {
 	const ERROR = 'FLAGRANT SYSTEM ERROR';
 
 	@customElement('browsix-terminal')
-	class Terminal extends polymer.Base {
+	class Terminal extends PolymerElement {
 		@property({type: Object})
 		kernel: any;
 
