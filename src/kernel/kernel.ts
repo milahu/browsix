@@ -14,7 +14,7 @@ import { ExitCallback, OutputCallback, SyscallContext, SyscallResult,
 
 import { HTTPParser } from 'http-parser-js';
 import type { HeaderInfo, HeaderObject } from 'http-parser-js';
-import * as bfs from 'browserfs';
+import * as BrowserFS from 'browserfs';
 import * as marshal from 'node-binary-marshal';
 
 import { utf8Slice, utf8ToBytes } from '../browser-node/binding/buffer';
@@ -2441,14 +2441,14 @@ export interface BootArgs {
 }
 
 export function Boot(fsType: string, fsArgs: any[], cb: BootCallback, args: BootArgs = {}): void {
-	let browserfs: any = {};
-	bfs.install(browserfs);
+	let browserfsGlobals: any = {};
+	BrowserFS.install(browserfsGlobals);
 	// this is the 'Buffer' in the file-level/module scope above.
-	Buffer = browserfs.Buffer;
+	Buffer = browserfsGlobals.Buffer;
 	if (typeof window !== 'undefined' && !(<any>window).Buffer) {
-		(<any>window).Buffer = browserfs.Buffer;
+		(<any>window).Buffer = browserfsGlobals.Buffer;
 	}
-	let rootConstructor: any = (<any>bfs).FileSystem[fsType];
+	let rootConstructor: any = (<any>BrowserFS).FileSystem[fsType];
 	if (!rootConstructor) {
 		setImmediate(cb, 'unknown FileSystem type: ' + fsType);
 		return;
@@ -2477,13 +2477,13 @@ export function Boot(fsType: string, fsArgs: any[], cb: BootCallback, args: Boot
 					cb(err, undefined);
 					return;
 				}
-				let writable = args.useLocalStorage ? new bfs.FileSystem['LocalStorage']() : new bfs.FileSystem['InMemory']();
-				let overlaid = new bfs.FileSystem['OverlayFS'](writable, asyncRoot);
+				let writable = args.useLocalStorage ? new BrowserFS.FileSystem['LocalStorage']() : new BrowserFS.FileSystem['InMemory']();
+				let overlaid = new BrowserFS.FileSystem['OverlayFS'](writable, asyncRoot);
 				overlaid.initialize(finishInit.bind(this, overlaid));
 			});
 		} else {
-			let writable = args.useLocalStorage ? new bfs.FileSystem['LocalStorage']() : new bfs.FileSystem['InMemory']();
-			let overlaid = new bfs.FileSystem['OverlayFS'](writable, asyncRoot);
+			let writable = args.useLocalStorage ? new BrowserFS.FileSystem['LocalStorage']() : new BrowserFS.FileSystem['InMemory']();
+			let overlaid = new BrowserFS.FileSystem['OverlayFS'](writable, asyncRoot);
 			overlaid.initialize(finishInit.bind(this, overlaid));
 		}
 	}
@@ -2492,16 +2492,16 @@ export function Boot(fsType: string, fsArgs: any[], cb: BootCallback, args: Boot
 export function BootWith(rootFs: any, cb: BootCallback, args: BootArgs = {}): void {
 	let nCPUs = 1;
 
-	let browserfs: any = {};
-	bfs.install(browserfs);
+	let browserfsGlobals: any = {};
+	BrowserFS.install(browserfsGlobals);
 	// this is the 'Buffer' in the file-level/module scope above.
-	Buffer = browserfs.Buffer;
+	Buffer = browserfsGlobals.Buffer;
 	if (typeof window !== 'undefined' && !(<any>window).Buffer) {
-		(<any>window).Buffer = browserfs.Buffer;
+		(<any>window).Buffer = browserfsGlobals.Buffer;
 	}
 
-	bfs.initialize(rootFs);
-	let fs = bfs.BFSRequire('fs');
+	BrowserFS.initialize(rootFs);
+	let fs = BrowserFS.BFSRequire('fs');
 	let k = new Kernel(fs, nCPUs, args);
 	// FIXME: this is for debugging purposes
 	(<any>window).kernel = k;
@@ -2509,7 +2509,7 @@ export function BootWith(rootFs: any, cb: BootCallback, args: BootArgs = {}): vo
 }
 
 export function BrowsixFSes(): any {
-	return (<any>bfs).FileSystem;
+	return (<any>BrowserFS).FileSystem;
 }
 
 // install our Boot method in the global scope
