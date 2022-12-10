@@ -2450,7 +2450,8 @@ export function Boot(fsType: string, fsArgs: any[], cb: BootCallback, args: Boot
 	}
 	let rootConstructor: any = (<any>BrowserFS).FileSystem[fsType];
 	if (!rootConstructor) {
-		setImmediate(cb, 'unknown FileSystem type: ' + fsType);
+		const err = new Error('unknown FileSystem type: ' + fsType);
+		setImmediate(() => cb(err, undefined));
 		return;
 	}
 	let asyncRoot = new (Function.prototype.bind.apply(rootConstructor, [null].concat(fsArgs)));
@@ -2505,7 +2506,7 @@ export function BootWith(rootFs: any, cb: BootCallback, args: BootArgs = {}): vo
 	let k = new Kernel(fs, nCPUs, args);
 	// FIXME: this is for debugging purposes
 	(<any>window).kernel = k;
-	setImmediate(cb, null, k);
+	setImmediate(() => cb(null, k));
 }
 
 export function BrowsixFSes(): any {
