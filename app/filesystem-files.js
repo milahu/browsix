@@ -15,7 +15,9 @@ export default async function () {
   const importCode = files.map(path => {
     const name = path.slice(prefix.length).replace(/\.[a-z0-9]+$/i, "");
     return `${object}[${str(name)}] = () => import(${str(path)});`;
-  }).join("\n");
+  }).join(" ");
+  // note: plugin does not emit sourcemaps
+  // workaround: dont emit newlines
   return {
     //data: files,
     code: importCode,
