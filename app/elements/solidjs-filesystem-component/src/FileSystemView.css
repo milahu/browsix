@@ -1,0 +1,72 @@
+/*
+li.file > div {
+  color: blue;
+}
+
+li.dir > div {
+  color: red;
+}
+*/
+
+/*
+li.dir > div {
+  color: blue;
+}
+
+li.dir.open > div {
+  color: red;
+}
+*/
+
+ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+li > ul {
+  padding-left: 1rem;
+}
+
+/*
+li {
+  font-family: monospace;
+}
+*/
+
+/*
+bullet
+*
+•
+*/
+li.file:before {
+  content: "• ";
+}
+
+/*
+right-pointing triangle
+>
+›
+⏵
+*/
+li.dir:before {
+  content: "⏵ ";
+  /* workaround: remove extra height */
+  line-height: 50%;
+}
+
+/*
+down-pointing triangle
+v
+⏷
+*/
+li.dir.open:before {
+  content: "⏷ ";
+  /* workaround: remove extra height */
+  line-height: 50%;
+}
+
+li.file > div,
+li.dir > div {
+  display: inline-block;
+  cursor: pointer;
+}

@@ -1,0 +1,46 @@
+{
+  "name": "solidjs-filesystem-component",
+  "version": "0.0.0",
+  "description": "filesystem component for the solid.js framework. compatible with browserfs",
+  "homepage": "https://github.com/milahu/solidjs-filesystem-component",
+  "scripts": {
+    "dev": "cd demo && vite",
+    "build": "cd demo && vite build && cd .. && touch docs/.nojekyll",
+    "serve": "cd demo && vite preview"
+  },
+  "license": "MIT",
+  "author": "milahu",
+  "keywords": [
+    "solidjs",
+    "solid-js",
+    "browserfs",
+    "filer",
+    "lightningfs",
+    "filemanager",
+    "file-manager",
+    "filesystem",
+    "node-fs",
+    "node-filesystem",
+    "node-fs-api",
+    "node-filesystem-api",
+    "fs",
+    "stat",
+    "readdir",
+    "readfile",
+    "writefile"
+  ],
+  "devDependencies": {
+    "@types/node": "^18.11.11",
+    "browserfs": "^1.4.3",
+    "buffer": "^6.0.3",
+    "events": "^3.3.0",
+    "node-stdlib-browser": "^1.2.0",
+    "pify": "^6.1.0",
+    "vite": "^3.1.8",
+    "vite-plugin-node-stdlib-browser": "^0.1.1",
+    "vite-plugin-solid": "^2.3.10"
+  },
+  "dependencies": {
+    "solid-js": "^1.6.0"
+  }
+}
