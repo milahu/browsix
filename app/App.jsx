@@ -53,7 +53,7 @@ function App() {
       // @ts-ignore
       fs.promises.mkdir = pify(fs.mkdir);
       // @ts-ignore
-      fs.promises.mktemp = pify(fs.mktemp);
+      //fs.promises.mktemp = pify(fs.mktemp); // TODO implement
       // @ts-ignore
       //fs.promises.access = pify(fs.access); // TODO implement
 
