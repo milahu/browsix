@@ -113,8 +113,14 @@ function App() {
   return (
     <Show when={getKernel()} fallback={<div>Loading kernel ...</div>}>
       <Terminal kernel={getKernel()}/>
-      <FileSystemView setFile={setFile}/>
-      <Editor getFile={getFile}/>
+      <div style="display:flex; width:100%; padding:1em; box-sizing:border-box">
+        <div style="flex-basis:20%; max-height:10em; overflow:auto">
+          <FileSystemView setFile={setFile}/>
+        </div>
+        <div style="flex-basis:80%">
+          <Editor getFile={getFile}/>
+        </div>
+      </div>
     </Show>
   )
 }
@@ -154,7 +160,7 @@ function Editor(props) {
   return (
     <div>
       <div>file: {props.getFile()}</div>
-      <textarea ref={textarea} cols="80" rows="8"></textarea>
+      <textarea ref={textarea} style="width:100%" rows="8"></textarea>
       <div>
         <button onClick={saveFile}>Save</button>
       </div>
