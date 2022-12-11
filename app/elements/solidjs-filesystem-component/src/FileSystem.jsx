@@ -75,7 +75,7 @@ export function FileSystemProvider(props) {
               fs._events.emit(k, ...args); // fire event after callback
             }
           }
-          orig(...args, cb2);
+          orig.apply(fs, [...args, cb2]);
         }
       });
 
