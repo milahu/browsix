@@ -222,9 +222,6 @@ function AppWrapper() {
 
     //console.log("AppWrapper: fs", fs);
 
-    // fix: fs.getRootFS() always returns undefined
-    fs.getRootFS = () => rootFs;
-
     /*
     // done in FileSystemProvider
     if (!fs.promises) {
