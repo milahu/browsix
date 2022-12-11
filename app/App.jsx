@@ -203,6 +203,10 @@ function AppWrapper() {
     // @ts-ignore
     const fs = fsGlobal.require("fs");
 
+    globalThis._browsix = {};
+    globalThis._browsix.fs = fs;
+    globalThis._browsix.buffer = fsGlobal.require("buffer");
+
     //console.log("AppWrapper: fs", fs);
 
     // fix: fs.getRootFS() always returns undefined
