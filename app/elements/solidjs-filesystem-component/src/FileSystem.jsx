@@ -58,6 +58,7 @@ export function FileSystemProvider(props) {
         //console.log("patching fs." + k)
         // @ts-ignore
         const orig = fs[k];
+        // TODO perf: avoid destructuring, patch arguments[arguments.length - 1]
         // @ts-ignore
         fs[k] = (...args) => {
           //fs._events.emit(k, ...args); // fire event before result
