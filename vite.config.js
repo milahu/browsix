@@ -13,7 +13,7 @@ import compileTime from "vite-plugin-compile-time"
 export default defineConfig({
   plugins: [
     solidPlugin(),
-    nodePolyfills(),
+    //nodePolyfills(),
     //dynamicGlobImports(),
     compileTime(),
   ],

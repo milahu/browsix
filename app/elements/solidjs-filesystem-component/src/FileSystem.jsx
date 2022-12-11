@@ -1,5 +1,5 @@
 import { createSignal, createContext, useContext, Show } from "solid-js";
-import EventEmitter from "events";
+import EventEmitter from "events-browserify";
 import pify from "pify";
 
 /** @typedef {import("solid-js").JSXElement} JSXElement */

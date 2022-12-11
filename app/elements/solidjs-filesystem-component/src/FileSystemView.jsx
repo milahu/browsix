@@ -1,6 +1,6 @@
 import { For, Show, Switch, Match, onMount } from "solid-js";
 import { createStore, unwrap } from "solid-js/store";
-import { resolve as resolveFilePath } from "node:path";
+import { resolve as resolveFilePath } from "path-browserify";
 
 import { useFileSystem } from "./FileSystem.jsx"
 
