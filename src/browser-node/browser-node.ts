@@ -19,7 +19,7 @@ import * as bindingCaresWrap from './binding/cares_wrap';
 import * as bindingTCPWrap from './binding/tcp_wrap';
 import * as bindingStreamWrap from './binding/stream_wrap';
 import * as bindingUDPWrap from './binding/udp_wrap';
-import * as bindingHTTPParser from './binding/http_parser';
+import * as bindingHTTPParser from 'http-parser-js';
 
 let _bindings: {[n: string]: any} = {
 	'buffer':        bindingBuffer,
