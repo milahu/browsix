@@ -5,11 +5,14 @@ console.log("App.jsx: hello")
 //import logo from './logo.svg';
 //import styles from './App.module.css';
 
-import { onMount, createSignal, Suspense, Show } from "solid-js";
+import { onMount, createSignal, createEffect, Show } from "solid-js";
 import pify from "pify";
 import * as BrowserFS from "browserfs";
 import {BootWith} from "../src/kernel/kernel"
 import {Terminal} from "./elements/browsix-terminal/browsix-terminal"
+import {FileSystemProvider, useFileSystem, FileSystemView} from "./elements/solidjs-filesystem-component"
+
+const debug = false;
 
 // get the data at compile time
 // https://github.com/egoist/vite-plugin-compile-time
@@ -25,47 +28,7 @@ import.meta.compileTime("./filesystem-files.js");
 function App() {
   const [getKernel, setKernel] = createSignal();
   onMount(async () => {
-    const rootFs = await pify(BrowserFS.FileSystem.MountableFileSystem.Create)({
-      '/tmp': await pify(BrowserFS.FileSystem.InMemory.Create)({}),
-      '/home': await pify(BrowserFS.FileSystem.IndexedDB.Create)({}),
-      //'/mnt/usb0': await pify(BrowserFS.FileSystem.LocalStorage.Create)({}),
-    });
-    BrowserFS.initialize(rootFs);
-    const fsGlobal = {};
-    BrowserFS.install(fsGlobal);
-    /** @type {typeof import("fs")} */
-    // @ts-ignore
-    const fs = fsGlobal.require("fs");
-
-    if (!fs.promises) {
-      // @ts-ignore
-      fs.promises = {};
-      // @ts-ignore
-      fs.promises.readFile = pify(fs.readFile);
-      // @ts-ignore
-      fs.promises.writeFile = pify(fs.writeFile);
-      // @ts-ignore
-      fs.promises.readdir = pify(fs.readdir);
-      // @ts-ignore
-      fs.promises.stat = pify(fs.stat);
-      // @ts-ignore
-      fs.promises.unlink = pify(fs.unlink);
-      // @ts-ignore
-      fs.promises.mkdir = pify(fs.mkdir);
-      // @ts-ignore
-      //fs.promises.mktemp = pify(fs.mktemp); // TODO implement
-      // @ts-ignore
-      //fs.promises.access = pify(fs.access); // TODO implement
-
-      const existsCb = fs.exists;
-      // @ts-ignore
-      fs.promises.exists = (path) => {
-        return new Promise((resolve, _reject) => {
-          existsCb.apply(fs, [path, resolve]);
-        });
-      };
-    }
-
+    const fs = useFileSystem();
     try { await fs.promises.mkdir("/bin"); } catch {}
     try { await fs.promises.mkdir("/usr"); } catch {}
     try { await fs.promises.mkdir("/usr/bin"); } catch {}
@@ -110,7 +73,7 @@ function App() {
         //console.log("App: file", file, "exists ...");
         const exists = await fs.promises.exists(filePath);
         //console.log("App: file", file, "exists", exists);
-        console.log("App: file", filePath, "from", fileSource);
+        //console.log("App: file", filePath, "from", fileSource);
         if (exists == false) {
           // copy file to filesystem
           // recursive mkdir. TODO implement in browserfs
@@ -133,18 +96,149 @@ function App() {
         }
       });
     }
+    const rootFs = fs.getRootFS();
+    console.log("App: fs", fs);
+    console.log("App: rootFs", rootFs);
     console.log("App: boot kernel");
+    // FIXME TypeError: rootFS.constructor.isAvailable is not a function
+    // BootWith should take "fs" not "rootFs"
     BootWith(rootFs, (error, kernel) => {
       if (error) throw error;
       setKernel(kernel);
     });
   });
 
+  const [getFile, setFile] = createSignal("");
+
   return (
     <Show when={getKernel()} fallback={<div>Loading kernel ...</div>}>
       <Terminal kernel={getKernel()}/>
+      <FileSystemView setFile={setFile}/>
+      <Editor getFile={getFile}/>
     </Show>
   )
 }
 
-export default App;
+/**
+  @param {Object} props
+  @param {() => string} props.getFile get file path
+*/
+function Editor(props) {
+  const fs = useFileSystem();
+  debug && console.log("EditMenu.Editor: fs", fs);
+  /** @type {HTMLTextAreaElement | undefined} */
+  let textarea;
+  // load file
+  createEffect(async () => {
+    if (!fs) throw new Error("no filesystem");
+    if (!textarea) throw new Error("no textarea");
+    const file = props.getFile();
+    debug && console.log("EditMenu.Editor: file", file);
+    if (file) {
+      const value = file ? await fs.promises.readFile(file, "utf8") : "";
+      textarea.value = value;
+    }
+  }, [props.getFile])
+  // save file
+  async function saveFile() {
+    if (!fs) throw new Error("no filesystem");
+    if (!textarea) throw new Error("no textarea");
+    const file = props.getFile();
+    debug && console.log("Editor saveFile: textarea", textarea);
+    const value = textarea.value;
+    debug && console.log("Editor saveFile: file", file, value)
+    await fs.promises.writeFile(file, value, "utf8");
+    debug && console.log("Editor saveFile: done")
+  }
+  // TODO codemirror + prosemirror
+  return (
+    <div>
+      <div>file: {props.getFile()}</div>
+      <textarea ref={textarea} cols="80" rows="8"></textarea>
+      <div>
+        <button onClick={saveFile}>Save</button>
+      </div>
+    </div>
+  );
+}
+
+function AppWrapper() {
+
+  async function getFs() {
+
+    //const fs = new LightningFS('fs')
+
+    /*
+    const rootFs = await pify(BrowserFS.FileSystem.MountableFileSystem.Create)({
+      '/tmp': await pify(BrowserFS.FileSystem.InMemory.Create)({}),
+      '/home': await pify(BrowserFS.FileSystem.IndexedDB.Create)({}),
+      //'/mnt/usb0': await pify(BrowserFS.FileSystem.LocalStorage.Create)({}),
+    });
+    */
+    /*
+    const rootFs = await pify(BrowserFS.FileSystem.IndexedDB.Create)({});
+    BrowserFS.initialize(rootFs);
+    */
+    const rootFs = await pify(BrowserFS.FileSystem.MountableFileSystem.Create)({
+      '/tmp': await pify(BrowserFS.FileSystem.InMemory.Create)({}),
+      '/home': await pify(BrowserFS.FileSystem.IndexedDB.Create)({}),
+      //'/mnt/usb0': await pify(BrowserFS.FileSystem.LocalStorage.Create)({}),
+    });
+    BrowserFS.initialize(rootFs);
+
+    //console.log("AppWrapper: rootFs", rootFs);
+
+    const fsGlobal = {};
+    BrowserFS.install(fsGlobal);
+    /** @type {typeof import("fs")} */
+    // @ts-ignore
+    const fs = fsGlobal.require("fs");
+
+    //console.log("AppWrapper: fs", fs);
+
+    // fix: fs.getRootFS() always returns undefined
+    fs.getRootFS = () => rootFs;
+
+    /*
+    // done in FileSystemProvider
+    if (!fs.promises) {
+      // @ts-ignore
+      fs.promises = {};
+      // @ts-ignore
+      fs.promises.readFile = pify(fs.readFile);
+      // @ts-ignore
+      fs.promises.writeFile = pify(fs.writeFile);
+      // @ts-ignore
+      fs.promises.readdir = pify(fs.readdir);
+      // @ts-ignore
+      fs.promises.stat = pify(fs.stat);
+      // @ts-ignore
+      fs.promises.unlink = pify(fs.unlink);
+      // @ts-ignore
+      fs.promises.mkdir = pify(fs.mkdir);
+      // @ts-ignore
+      //fs.promises.mktemp = pify(fs.mktemp); // TODO implement
+      // @ts-ignore
+      //fs.promises.access = pify(fs.access); // TODO implement
+
+      const existsCb = fs.exists;
+      // @ts-ignore
+      fs.promises.exists = (path) => {
+        return new Promise((resolve, _reject) => {
+          existsCb.apply(fs, [path, resolve]);
+        });
+      };
+    }
+    */
+
+    return fs;
+  }
+
+  return (
+    <FileSystemProvider getFs={getFs} fallbackLoading={<div>Loading filesystem ...</div>}>
+      <App/>
+    </FileSystemProvider>
+  )
+}
+
+export default AppWrapper;
