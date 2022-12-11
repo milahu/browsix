@@ -66,14 +66,14 @@ function App() {
     }
     if (true) {
       console.log("App: filesystemFiles", filesystemFiles);
-      Object.entries(filesystemFiles).map(async ([filePath, fileSource]) => {
+      Object.entries(filesystemFiles).map(async ([filePath, file]) => {
         if (filePath.startsWith("/bin/") == false) return; // TODO later
         filePath = "/usr" + filePath; // TODO generate correct path on comptime
         //console.log("App: file", filePath);
         //console.log("App: file", file, "exists ...");
         const exists = await fs.promises.exists(filePath);
         //console.log("App: file", file, "exists", exists);
-        //console.log("App: file", filePath, "from", fileSource);
+        //console.log("App: file", filePath, "from", file.source);
         if (exists == false) {
           // copy file to filesystem
           // recursive mkdir. TODO implement in browserfs
@@ -85,14 +85,27 @@ function App() {
           }
           // fetch + write
           // TODO does this work on github pages?
-          console.log("App: file", filePath, "from", fileSource, "- fetching");
-          const response = await fetch(fileSource);
+          console.log("App: file", filePath, "from", file.source, "- fetching");
+          const fileModule = await file.import();
+          console.log("App: file", filePath, "from", file.source, "- imported module", fileModule);
+          const response = await fetch(file.source);
           const fileText = await response.text();
           await fs.promises.writeFile(filePath, fileText, "utf8");
 
           // TODO better? mount browserfs XmlHttpRequest filesystem
 
           // TODO *.js files must be compiled with target = node
+          // original files:
+          // https://unix.bpowers.net/fs/index.json
+          // https://unix.bpowers.net/fs/usr/bin/cat
+          /*
+            #!/usr/bin/env node
+            'use strict';
+            var fs = require('fs');
+            var util_1 = require('util');
+            // ...
+            process.stderr.write(msg, cb);
+          */
         }
       });
     }
