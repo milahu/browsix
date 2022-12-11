@@ -51,8 +51,10 @@ export function FileSystemProvider(props) {
       // watch filesystem events
       // https://github.com/jvilk/BrowserFS/issues/163
       fs._events = new EventEmitter();
-      //;["writeFile", "readFile", "stat", "mkdir", "unlink"].forEach(k => {
-      Object.keys(fs).filter(k => typeof fs[k] === "function").forEach(k => {
+      // patch only fs.* methods, dont patch browserfs methods like fs.initialize or fs.getRootFS
+      // JSON.stringify(Object.keys(require("fs")).filter(n => !n.endsWith("Sync") && n.match(/^[a-z]/)))
+      ;["appendFile","access","chown","chmod","close","copyFile","cp","createReadStream","createWriteStream","exists","fchown","fchmod","fdatasync","fstat","fsync","ftruncate","futimes","lchown","lchmod","link","lstat","lutimes","mkdir","mkdtemp","open","opendir","readdir","read","readv","readFile","readlink","realpath","rename","rm","rmdir","stat","symlink","truncate","unwatchFile","unlink","utimes","watch","watchFile","writeFile","write","writev"].forEach(k => {
+      //Object.keys(fs).filter(k => typeof fs[k] === "function").forEach(k => {
         //console.log("patching fs." + k)
         // @ts-ignore
         const orig = fs[k];
@@ -107,6 +109,7 @@ export function FileSystemProvider(props) {
       //fs.promises.mktemp = pify(fs.mktemp); // TODO implement in browserfs
       // @ts-ignore
       //fs.promises.access = pify(fs.access); // TODO implement in browserfs
+      // TOOD more?
 
       // fs.exists has non-standard callback signature:
       // (result: boolean) => void
