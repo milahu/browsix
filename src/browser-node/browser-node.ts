@@ -130,8 +130,8 @@ let process = new Process(undefined, { /* NODE_DEBUG: 'fs' */ });
 if (typeof (<any>self).setTimeout === 'undefined')
 	(<any>self).setTimeout = superSadSetTimeout;
 
-import * as fs from './fs';
-import * as buffer from './buffer';
+const fs = globalThis._browsix.fs;
+const buffer = globalThis._browsix.buffer;
 
 (<any>self).Buffer = buffer.Buffer;
 
