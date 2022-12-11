@@ -113,14 +113,17 @@ function App() {
   return (
     <Show when={getKernel()} fallback={<div>Loading kernel ...</div>}>
       <Terminal kernel={getKernel()}/>
-      <div style="display:flex; width:100%; padding:1em; box-sizing:border-box">
-        <div style="flex-basis:20%; max-height:10em; overflow:auto">
-          <FileSystemView setFile={setFile}/>
+      <details>
+        <summary>files</summary>
+        <div style="display:flex; width:100%; padding:1em; box-sizing:border-box">
+          <div style="flex-basis:20%; max-height:10em; overflow:auto">
+            <FileSystemView setFile={setFile}/>
+          </div>
+          <div style="flex-basis:80%">
+            <Editor getFile={getFile}/>
+          </div>
         </div>
-        <div style="flex-basis:80%">
-          <Editor getFile={getFile}/>
-        </div>
-      </div>
+      </details>
     </Show>
   )
 }
