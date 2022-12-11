@@ -1,6 +1,5 @@
 .output, .input_container, .input {
   background: black;
-  font-size: 24px;
   font-family: 'Hack', 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   color: white;
   -webkit-box-sizing: border-box;
@@ -11,12 +10,12 @@
 }
 
 .output, .input_container {
-  padding-left: 24px;
-  padding-right: 24px;
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
 
 .output {
-  padding-top: 24px;
+  padding-top: 1rem;
 }
 
 .output:empty {
@@ -24,11 +23,11 @@
 }
 
 .input_container {
-  padding-bottom: 24px;
+  padding-bottom: 1rem;
 }
 
 .output:empty + .input_container {
-  padding-top: 24px;
+  padding-top: 1rem;
 }
 
 .input {
@@ -38,6 +37,5 @@
   border: 0;
   outline: 0;
   color: white;
-  font-size: 24px;
   font-family: 'Hack', 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
