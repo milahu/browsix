@@ -2175,6 +2175,8 @@ export class Task implements ITask {
 	}
 
 	blobReady(blobUrl: string): void {
+		console.log("kernel: blobReady: blobUrl", blobUrl);
+		// FIXME browser-node.ts: SyntaxError: Cannot use import statement outside a module
 		if (this.worker) {
 			this.worker.onmessage = undefined;
 			this.worker.terminate();
