@@ -16,9 +16,9 @@ import {Terminal} from "./elements/browsix-terminal/browsix-terminal"
 // @ts-ignore Property 'compileTime' does not exist on type 'ImportMeta'. ts(2339)
 // codegen:
 // const filesystemFiles = {
-//   './path/to/file.js': () => import('./path/to/file.js'),
+//   '/bin/file': () => '/path/to/bin/file.js',
 // };
-/** @type {Record<string, () => any>} */
+/** @type {Record<string, string>} */
 const filesystemFiles = {};
 import.meta.compileTime("./filesystem-files.js");
 
@@ -102,36 +102,34 @@ function App() {
       });
     }
     if (true) {
-      Object.entries(filesystemFiles).map(async ([file, importFile]) => {
-        if (file.startsWith("/bin/") == false) return; // TODO later
-        file = "/usr" + file; // TODO generate correct path on comptime
-        console.log("App: file", file);
-        /*
-        try {
-          console.log("App: file", file, "access ...");
-          // FIXME never resolves
-          const r = await fs.promises.access(file, fs.constants.F_OK);
-          console.log("App: file", file, "access ok", r);
-        }
-        catch {}
-        */
-        // FIXME never resolves
-        console.log("App: file", file, "exists ...");
-        const exists = await fs.promises.exists(file);
-        console.log("App: file", file, "exists", exists);
+      console.log("App: filesystemFiles", filesystemFiles);
+      Object.entries(filesystemFiles).map(async ([filePath, fileSource]) => {
+        if (filePath.startsWith("/bin/") == false) return; // TODO later
+        filePath = "/usr" + filePath; // TODO generate correct path on comptime
+        //console.log("App: file", filePath);
+        //console.log("App: file", file, "exists ...");
+        const exists = await fs.promises.exists(filePath);
+        //console.log("App: file", file, "exists", exists);
+        console.log("App: file", filePath, "from", fileSource);
         if (exists == false) {
           // copy file to filesystem
           // recursive mkdir. TODO implement in browserfs
-          const parts = file.split("/");
-          for (let i = 0; i < parts.length; i++) {
+          const parts = filePath.split("/");
+          for (let i = 1; i < parts.length; i++) {
             const dirPath = parts.slice(0, i).join("/");
-            console.log("mkdir", dirPath);
+            //console.log("mkdir:", "i", i, "len", parts.length, "dirPath", dirPath);
             try { await fs.promises.mkdir(dirPath); } catch {}
           }
-          // TODO fetch + fs.writeFile
+          // fetch + write
+          // TODO does this work on github pages?
+          console.log("App: file", filePath, "from", fileSource, "- fetching");
+          const response = await fetch(fileSource);
+          const fileText = await response.text();
+          await fs.promises.writeFile(filePath, fileText, "utf8");
 
-          // TODO better: mount browserfs XmlHttpRequest filesystem
-          // *.js files must be compiled with target = node
+          // TODO better? mount browserfs XmlHttpRequest filesystem
+
+          // TODO *.js files must be compiled with target = node
         }
       });
     }
