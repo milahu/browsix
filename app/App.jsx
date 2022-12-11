@@ -58,46 +58,12 @@ function App() {
       //fs.promises.access = pify(fs.access); // TODO implement
 
       const existsCb = fs.exists;
+      // @ts-ignore
       fs.promises.exists = (path) => {
         return new Promise((resolve, _reject) => {
-          //console.log("fs.promises.exists: calling fs.exists")
-          //resolve(false);
-          existsCb.apply(fs, [path, resolve]); // never resolves
-          //existsCb(path, resolve); // never resolves
-          //fs.exists.apply(fs, [path, resolve]); // wrong
-          //existsRaw(path, (result) => { // wrong
-          // wrong. infinite recursion
-          //fs.exists(path, (result) => {
-          //  //console.log("fs.promises.exists: result", result);
-          //  resolve(result);
-          //});
+          existsCb.apply(fs, [path, resolve]);
         });
       };
-
-      if (false) {
-        // simple but wrong ... fs.promises.exists hangs
-        // @ts-ignore
-        fs.promises = pify(fs);
-        // fs.exists has non-standard callback signature:
-        // (result: boolean) => void
-        /** @param {import("fs").PathLike} path */
-        // @ts-ignore
-        fs.promises.exists = (path) => {
-          return new Promise((resolve, _reject) => {
-            //console.log("fs.promises.exists: calling fs.exists")
-            //resolve(false);
-            existsCb.apply(fs, [path, resolve]); // never resolves
-            //existsCb(path, resolve); // never resolves
-            //fs.exists.apply(fs, [path, resolve]); // wrong
-            //existsRaw(path, (result) => { // wrong
-            // wrong. infinite recursion
-            //fs.exists(path, (result) => {
-            //  //console.log("fs.promises.exists: result", result);
-            //  resolve(result);
-            //});
-          });
-        };
-      }
     }
 
     try { await fs.promises.mkdir("/bin"); } catch {}
