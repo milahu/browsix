@@ -2165,9 +2165,7 @@ export class Task implements ITask {
 			return;
 		}
 
-		let jsBytes = new Uint8Array((<any>buf).data.buff.buffer);
-		let blob = new Blob([jsBytes], {type: 'text/javascript'});
-		jsBytes = undefined;
+		let blob = new Blob([buf], {type: 'text/javascript'});
 		let blobUrl = window.URL.createObjectURL(blob);
 
 		// keep a reference to the URL so that we can use it for fork().
