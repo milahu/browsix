@@ -2089,7 +2089,7 @@ export class Task implements ITask {
 				return;
 			}
 			let buf = new Buffer(stats.size);
-			this.kernel.fs.read(fd, buf, 0, stats.size, 0, this.fileRead.bind(this, fd));
+			this.kernel.fs.read(fd, buf, 0, stats.size, 0, (err, bytesRead) => this.fileRead(fd, err, bytesRead, buf));
 		});
 	}
 
